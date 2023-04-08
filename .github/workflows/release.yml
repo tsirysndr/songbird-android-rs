@@ -47,12 +47,12 @@ jobs:
           args: -t armeabi-v7a -t arm64-v8a -o ./jniLibs build --release
       - name: Archiving artifacts
         run: |
-          tar -czvf songbird-android.tar.gz ./jniLibs
-          sha256sum songbird-android.tar.gz > songbird-android.tar.gz.sha256
+          tar -czvf songbird-android-rs.tar.gz ./jniLibs
+          sha256sum songbird-android-rs.tar.gz > songbird-android-rs.tar.gz.sha256
       - name: Uploading artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: songbird-android
+          name: songbird-android-rs
           path: |
-            songbird-android.tar.gz
-            songbird-android.tar.gz.sha256
+            songbird-android-rs.tar.gz
+            songbird-android-rs.tar.gz.sha256
