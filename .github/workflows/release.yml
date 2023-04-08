@@ -50,10 +50,11 @@ jobs:
         run: |
           tar -czvf songbird-android-rs.tar.gz ./jniLibs
           sha256sum songbird-android-rs.tar.gz > songbird-android-rs.tar.gz.sha256
-      - name: Uploading artifacts
-        uses: actions/upload-artifact@v2
+      - name: Release
+        uses: softprops/action-gh-release@v1
         with:
-          name: songbird-android-rs
-          path: |
+          files: |
             songbird-android-rs.tar.gz
             songbird-android-rs.tar.gz.sha256
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
