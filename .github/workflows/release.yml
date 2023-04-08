@@ -41,7 +41,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: install
-          args: cargo-ndk
+          args: cargo-ndk --force
       - name: Building Android artifacts
         uses: actions-rs/cargo@v1
         with:
