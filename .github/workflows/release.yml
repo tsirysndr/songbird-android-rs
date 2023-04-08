@@ -33,6 +33,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+          target: aarch64-linux-android armv7-linux-androideabi
           override: true
       - name: Installing cargo-ndk
         uses: actions-rs/cargo@v1
