@@ -18,6 +18,7 @@ jobs:
           unzip android-ndk-r25c-linux.zip
           echo "ANDROID_NDK_HOME=$PWD/android-ndk-r25c" >> $GITHUB_ENV
           echo "$PWD/android-ndk-r25c/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_PATH
+          echo "RUSTFLAGS=-C link-arg=-lc++_shared" >> $GITHUB_ENV
       - uses: actions/cache@v3
         with:
           path: |
