@@ -1,0 +1,57 @@
+on:
+  release:
+    types: [created]
+
+jobs:
+  release:
+    name: release
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@master
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+      - name: Setup Android NDK
+        run: |
+          wget https://dl.google.com/android/repository/android-ndk-r25c-linux.zip
+          unzip android-ndk-r25c-linux.zip
+          echo "ANDROID_NDK_HOME=$PWD/android-ndk-r25c" >> $GITHUB_ENV
+          echo "$PWD/android-ndk-r25c/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_PATH
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Installing needed dependencies
+        run: sudo apt-get install -y libasound2-dev protobuf-compiler
+      - name: Installing Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: Installing cargo-ndk
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: cargo-ndk
+      - name: Building Android artifacts
+        uses: actions-rs/cargo@v1
+        with:
+          command: ndk
+          args: -t armeabi-v7a -t arm64-v8a -o ./jniLibs build --release
+      - name: Archiving artifacts
+        run: |
+          tar -czvf songbird-android.tar.gz ./jniLibs
+          sha256sum songbird-android.tar.gz > songbird-android.tar.gz.sha256
+      - name: Uploading artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: songbird-android
+          path: |
+            songbird-android.tar.gz
+            songbird-android.tar.gz.sha256
