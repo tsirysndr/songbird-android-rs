@@ -1,5 +1,8 @@
+use anyhow::Error;
+use futures::future::FutureExt;
 use futures_channel::mpsc::UnboundedSender;
 use music_player_discovery::register_services;
+use music_player_entity::{album, artist, artist_tracks, track};
 use music_player_graphql::{
     schema::{
         objects::{player_state::PlayerState, track::Track},
@@ -12,11 +15,14 @@ use music_player_playback::{
     config::AudioFormat,
     player::{Player, PlayerEvent},
 };
+use music_player_scanner::scan_directory;
 use music_player_server::event::{Event, TrackEvent};
 use music_player_server::server::MusicPlayerServer;
 use music_player_storage::{searcher::Searcher, Database};
 use music_player_tracklist::Tracklist;
+use music_player_types::types::Song;
 use music_player_webui::start_webui;
+use sea_orm::ActiveModelTrait;
 use sea_orm::{ConnectionTrait, DbBackend, Statement};
 use std::{
     collections::HashMap,
@@ -46,8 +52,24 @@ pub async fn start_all() -> anyhow::Result<()> {
     .await?;
     db.create_indexes().await;
 
-    // let db_conn = Database::new().await;
-    // let searcher = Searcher::new();
+    thread::spawn(move || {
+        let runtime = tokio::runtime::Builder::new_multi_thread()
+            .enable_all()
+            .build()
+            .unwrap();
+        runtime.block_on(async {
+            let db_conn = Database::new().await;
+            let searcher = Searcher::new();
+            match scan_music_library(true, db_conn, searcher).await {
+                Ok(_) => {
+                    debug!("Music library scanned successfully");
+                }
+                Err(e) => {
+                    error!("Error scanning music library: {}", e);
+                }
+            };
+        });
+    });
 
     let db = Arc::new(Mutex::new(Database::new().await));
     let tracklist = Arc::new(std::sync::Mutex::new(Tracklist::new_empty()));
@@ -59,6 +81,9 @@ pub async fn start_all() -> anyhow::Result<()> {
     let cloned_cmd_rx = Arc::clone(&cmd_rx);
     let cmd_tx_ws = Arc::clone(&cloned_cmd_tx);
     let cmd_tx_webui = Arc::clone(&cloned_cmd_tx);
+
+    debug!(">> Setting up player...");
+
     let (_, _) = Player::new(
         move || backend(None, audio_format),
         move |event| {
@@ -113,8 +138,11 @@ pub async fn start_all() -> anyhow::Result<()> {
     let db_ws = Arc::clone(&db);
     let peer_map_ws = Arc::clone(&peer_map);
 
+    debug!(">> Registering services...");
+
     register_services();
 
+    debug!(">> Starting web server...");
     // Start the web server
     thread::spawn(move || {
         let runtime = tokio::runtime::Builder::new_multi_thread()
@@ -136,6 +164,9 @@ pub async fn start_all() -> anyhow::Result<()> {
             }
         }
     });
+
+    debug!(">> Starting web socket server...");
+
     // Spawn a thread to handle the player events
     thread::spawn(move || {
         let runtime = tokio::runtime::Builder::new_multi_thread()
@@ -151,7 +182,57 @@ pub async fn start_all() -> anyhow::Result<()> {
             }
         }
     });
+
+    debug!(">> Starting web ui server...");
+
     start_webui(cmd_tx_webui, tracklist_webui).await?;
 
     Ok(())
+}
+
+pub async fn scan_music_library(
+    enable_log: bool,
+    db: Database,
+    searcher: Searcher,
+) -> Result<Vec<Song>, Error> {
+    scan_directory(
+        move |song, db| {
+            async move {
+                let item: artist::ActiveModel = song.try_into().unwrap();
+                match item.insert(db.get_connection()).await {
+                    Ok(_) => (),
+                    Err(_) => (),
+                }
+
+                let item: album::ActiveModel = song.try_into().unwrap();
+                match item.insert(db.get_connection()).await {
+                    Ok(_) => (),
+                    Err(_) => (),
+                }
+
+                let item: track::ActiveModel = song.try_into().unwrap();
+
+                if enable_log {
+                    let filename = song.uri.as_ref().unwrap().split("/").last().unwrap();
+                    let path = song.uri.as_ref().unwrap().replace(filename, "");
+                    debug!("{}{}", path, filename);
+                }
+
+                match item.insert(db.get_connection()).await {
+                    Ok(_) => (),
+                    Err(_) => (),
+                }
+
+                let item: artist_tracks::ActiveModel = song.try_into().unwrap();
+                match item.insert(db.get_connection()).await {
+                    Ok(_) => (),
+                    Err(_) => (),
+                }
+            }
+            .boxed()
+        },
+        &db,
+        &searcher,
+    )
+    .await
 }
