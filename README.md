@@ -17,7 +17,7 @@ sudo apt-get install -y protobuf-compiler # Ubuntu/Debian
 git clone https://github.com/tsirysndr/songbird-android-rs
 cd songbird-android-rs
 cargo install cargo-ndk
-cargo ndk -t armeabi-v7a -t arm64-v8a -o ./jniLibs/ build --release
+RUSTFLAGS="-C link-arg=-lc++_shared" cargo ndk -t armeabi-v7a -t arm64-v8a -o ./jniLibs/ build --release
 ```
 
 ## Contributing
