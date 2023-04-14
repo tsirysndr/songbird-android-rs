@@ -32,7 +32,7 @@ A simple music player written in Rust"#
 }
 
 #[no_mangle]
-#[export_name = "Java_com_tsirysndr_songbirdlib_Songbird_00024Companion_start_blocking"]
+#[export_name = "Java_com_tsirysndr_songbirdlib_Songbird_00024Companion_start_1blocking"]
 pub extern "C" fn start_blocking() {
     android_logger::init_once(Config::default().with_max_level(LevelFilter::Trace));
     debug!(
