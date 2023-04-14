@@ -1,5 +1,5 @@
 [package]
-name = "songbird-android-rs"
+name = "songbird-android"
 version = "0.1.0"
 edition = "2021"
 

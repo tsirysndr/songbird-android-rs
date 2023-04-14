@@ -56,6 +56,8 @@ jobs:
         run: |
           tar -czvf songbird-android-rs.tar.gz ./jniLibs
           sha256sum songbird-android-rs.tar.gz > songbird-android-rs.tar.gz.sha256
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
