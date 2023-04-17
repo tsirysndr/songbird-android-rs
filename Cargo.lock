@@ -3631,7 +3631,7 @@ checksum = "6d14cf4a96e4a3e051cf95f9248950ec64c906ecbba72c5b7c22774a574f2ef9"
 dependencies = [
  "anyhow",
  "futures-util",
- "music-player-server",
+ "music-player-server 0.1.13",
  "music-player-settings",
  "music-player-types",
  "tokio",
@@ -3793,6 +3793,40 @@ dependencies = [
  "sea-orm",
  "serde",
  "tokio",
+ "tokio-tungstenite",
+ "tonic",
+ "tonic-build",
+ "tonic-web",
+ "tungstenite 0.17.3",
+ "uuid",
+]
+
+[[package]]
+name = "music-player-server"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "11c6611efebb9e517e339702d65f6a597d1d029291c21420b050f0a217333ebe"
+dependencies = [
+ "chrono",
+ "cuid",
+ "futures",
+ "futures-channel",
+ "futures-util",
+ "log",
+ "md5",
+ "music-player-entity",
+ "music-player-playback",
+ "music-player-scanner",
+ "music-player-settings",
+ "music-player-storage",
+ "music-player-tracklist",
+ "music-player-types",
+ "owo-colors",
+ "prost",
+ "sea-orm",
+ "serde",
+ "tokio",
+ "tokio-stream",
  "tokio-tungstenite",
  "tonic",
  "tonic-build",
@@ -5767,7 +5801,7 @@ dependencies = [
  "music-player-migration",
  "music-player-playback",
  "music-player-scanner",
- "music-player-server",
+ "music-player-server 0.2.0",
  "music-player-settings",
  "music-player-storage",
  "music-player-tracklist",
