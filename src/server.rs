@@ -18,10 +18,12 @@ use music_player_playback::{
 use music_player_scanner::scan_directory;
 use music_player_server::event::{Event, TrackEvent};
 use music_player_server::server::MusicPlayerServer;
+use music_player_settings::{read_settings, Settings};
 use music_player_storage::{searcher::Searcher, Database};
 use music_player_tracklist::Tracklist;
 use music_player_types::types::Song;
 use music_player_webui::start_webui;
+use music_player_client::{library::LibraryClient};
 use sea_orm::ActiveModelTrait;
 use sea_orm::{ConnectionTrait, DbBackend, Statement};
 use std::{
@@ -37,6 +39,9 @@ type Tx = UnboundedSender<Message>;
 type PeerMap = Arc<sync::Mutex<HashMap<SocketAddr, Tx>>>;
 
 pub async fn start_all() -> anyhow::Result<()> {
+    if connect_to_server().await {
+        return Ok(());
+    }
     migration::run().await;
     let audio_format = AudioFormat::default();
     let backend = audio_backend::find(Some(RodioSink::NAME.to_string())).unwrap();
@@ -190,7 +195,19 @@ pub async fn start_all() -> anyhow::Result<()> {
     Ok(())
 }
 
+async fn connect_to_server() -> bool {
+    let config = read_settings().unwrap();
+    let settings = config.try_deserialize::<Settings>().unwrap();
+    match LibraryClient::new(settings.host, settings.port).await {
+        Ok(_) => true,
+        Err(_) => false,
+    }
+}
+
 pub async fn start_over_uds(socket_path: String) -> anyhow::Result<()> {
+    if connect_to_server().await {
+        return Ok(());
+    }
     migration::run().await;
     let audio_format = AudioFormat::default();
     let backend = audio_backend::find(Some(RodioSink::NAME.to_string())).unwrap();

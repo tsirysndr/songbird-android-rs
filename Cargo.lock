@@ -5795,6 +5795,7 @@ dependencies = [
  "jni 0.21.1",
  "log",
  "music-player-audio",
+ "music-player-client",
  "music-player-discovery",
  "music-player-entity",
  "music-player-graphql",
