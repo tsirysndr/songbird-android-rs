@@ -1,6 +1,7 @@
 use anyhow::Error;
 use futures::future::FutureExt;
 use futures_channel::mpsc::UnboundedSender;
+use music_player_client::library::LibraryClient;
 use music_player_discovery::register_services;
 use music_player_entity::{album, artist, artist_tracks, track};
 use music_player_graphql::{
@@ -23,7 +24,6 @@ use music_player_storage::{searcher::Searcher, Database};
 use music_player_tracklist::Tracklist;
 use music_player_types::types::Song;
 use music_player_webui::start_webui;
-use music_player_client::{library::LibraryClient};
 use sea_orm::ActiveModelTrait;
 use sea_orm::{ConnectionTrait, DbBackend, Statement};
 use std::{
@@ -140,7 +140,7 @@ pub async fn start_all() -> anyhow::Result<()> {
 
     let tracklist_ws = Arc::clone(&tracklist);
     let tracklist_webui = Arc::clone(&tracklist);
-    let db_ws = Arc::clone(&db);
+    let db_ws = Arc::new(Mutex::new(Database::new().await));
     let peer_map_ws = Arc::clone(&peer_map);
 
     debug!(">> Registering services...");
