@@ -3837,9 +3837,9 @@ dependencies = [
 
 [[package]]
 name = "music-player-settings"
-version = "0.1.5"
+version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8dfb7e29234f3ee232864b870398b322db010b2eadad756bfcccbc1a427266c8"
+checksum = "14230c2a1dfe0ad487e1972b35857274e32a53185f15cbb3933b2d9898194acc"
 dependencies = [
  "config 0.13.3",
  "dirs 4.0.0",
@@ -3851,9 +3851,9 @@ dependencies = [
 
 [[package]]
 name = "music-player-storage"
-version = "0.1.7"
+version = "0.1.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "416eabd024b11f40669993cfe84d769066dbe9df04c7b84bea943b2d192a0e1a"
+checksum = "2cde5b6b988aeaf4a63e1b4bd2f954c2835b3609ebb31f614d26cfff23fbc6c4"
 dependencies = [
  "anyhow",
  "itertools",
