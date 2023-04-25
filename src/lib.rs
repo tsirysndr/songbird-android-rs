@@ -5,10 +5,7 @@ pub mod server;
 
 use android_logger::Config;
 use log::LevelFilter;
-use std::{
-    ffi::{c_char, CStr},
-    thread,
-};
+use std::thread;
 
 #[no_mangle]
 #[export_name = "Java_com_tsirysndr_songbirdlib_Songbird_00024Companion_start"]

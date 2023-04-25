@@ -32,7 +32,6 @@ use std::{
     sync::{self, Arc},
     thread,
 };
-use tokio::sync::Mutex;
 use tungstenite::Message;
 
 type Tx = UnboundedSender<Message>;
@@ -76,7 +75,6 @@ pub async fn start_all() -> anyhow::Result<()> {
         });
     });
 
-    let db = Arc::new(Mutex::new(Database::new().await));
     let tracklist = Arc::new(std::sync::Mutex::new(Tracklist::new_empty()));
     let (cmd_tx, cmd_rx) = tokio::sync::mpsc::unbounded_channel();
     let cloned_tracklist = Arc::clone(&tracklist);
@@ -140,7 +138,6 @@ pub async fn start_all() -> anyhow::Result<()> {
 
     let tracklist_ws = Arc::clone(&tracklist);
     let tracklist_webui = Arc::clone(&tracklist);
-    let db_ws = Arc::new(Mutex::new(Database::new().await));
     let peer_map_ws = Arc::clone(&peer_map);
 
     debug!(">> Registering services...");
@@ -154,6 +151,7 @@ pub async fn start_all() -> anyhow::Result<()> {
             .enable_all()
             .build()
             .unwrap();
+        let db = runtime.block_on(Database::new());
         match runtime.block_on(
             MusicPlayerServer::new(
                 cloned_tracklist,
@@ -178,9 +176,10 @@ pub async fn start_all() -> anyhow::Result<()> {
             .enable_all()
             .build()
             .unwrap();
-        match runtime.block_on(
-            MusicPlayerServer::new(tracklist_ws, cmd_tx_ws, peer_map_ws, db_ws).start_ws(),
-        ) {
+        let db = runtime.block_on(Database::new());
+        match runtime
+            .block_on(MusicPlayerServer::new(tracklist_ws, cmd_tx_ws, peer_map_ws, db).start_ws())
+        {
             Ok(_) => {}
             Err(e) => {
                 println!("{}", e);
@@ -242,7 +241,7 @@ pub async fn start_over_uds(socket_path: String) -> anyhow::Result<()> {
         });
     });
 
-    let db = Arc::new(Mutex::new(Database::new().await));
+    let db = Database::new().await;
     let tracklist = Arc::new(std::sync::Mutex::new(Tracklist::new_empty()));
     let (cmd_tx, cmd_rx) = tokio::sync::mpsc::unbounded_channel();
     let cloned_tracklist = Arc::clone(&tracklist);
@@ -255,7 +254,6 @@ pub async fn start_over_uds(socket_path: String) -> anyhow::Result<()> {
     let tracklist_uds = Arc::clone(&tracklist);
     let cmd_tx_uds = Arc::clone(&cmd_tx);
     let peer_map_uds = Arc::clone(&peer_map);
-    let db_uds = Arc::clone(&db);
 
     debug!(">> Setting up player...");
 
@@ -310,7 +308,6 @@ pub async fn start_over_uds(socket_path: String) -> anyhow::Result<()> {
 
     let tracklist_ws = Arc::clone(&tracklist);
     let tracklist_webui = Arc::clone(&tracklist);
-    let db_ws = Arc::clone(&db);
     let peer_map_ws = Arc::clone(&peer_map);
 
     debug!(">> Registering services...");
@@ -345,12 +342,13 @@ pub async fn start_over_uds(socket_path: String) -> anyhow::Result<()> {
             .enable_all()
             .build()
             .unwrap();
+        let db = runtime.block_on(Database::new());
         match runtime.block_on(
             MusicPlayerServer::new(
                 tracklist_uds,
                 Arc::clone(&cmd_tx_uds),
                 Arc::clone(&peer_map_uds),
-                db_uds,
+                db,
             )
             .start_over_unix_domain_socket(&socket_path),
         ) {
@@ -369,6 +367,7 @@ pub async fn start_over_uds(socket_path: String) -> anyhow::Result<()> {
             .enable_all()
             .build()
             .unwrap();
+        let db_ws = runtime.block_on(Database::new());
         match runtime.block_on(
             MusicPlayerServer::new(tracklist_ws, cmd_tx_ws, peer_map_ws, db_ws).start_ws(),
         ) {

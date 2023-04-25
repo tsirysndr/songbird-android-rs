@@ -3576,9 +3576,9 @@ dependencies = [
 
 [[package]]
 name = "music-player-addons"
-version = "0.1.5"
+version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "699a0510a1735d5a73152db1a5d57bb9d5d751a5acebf5baf0621c1ad5b88a36"
+checksum = "869772764fe21466305e975df72f0d2a4df4170ecf71de135d4c54e884bf9642"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -3625,13 +3625,13 @@ dependencies = [
 
 [[package]]
 name = "music-player-client"
-version = "0.1.4"
+version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6d14cf4a96e4a3e051cf95f9248950ec64c906ecbba72c5b7c22774a574f2ef9"
+checksum = "0931f91de862eecf3c9ffe43b44f72fa3b0d91a007744cac84bb4db4744be397"
 dependencies = [
  "anyhow",
  "futures-util",
- "music-player-server 0.1.13",
+ "music-player-server",
  "music-player-settings",
  "music-player-types",
  "tokio",
@@ -3673,9 +3673,9 @@ dependencies = [
 
 [[package]]
 name = "music-player-graphql"
-version = "0.1.8"
+version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ada822b238cd8745dd43141c05bb4ce2f09312fa2b2384818032d43cb4d1326e"
+checksum = "aa47f028cbbe5ea01247d4d497726a216ca1126530467baab7df8b08bf4fd720"
 dependencies = [
  "anyhow",
  "async-graphql",
@@ -3771,41 +3771,9 @@ dependencies = [
 
 [[package]]
 name = "music-player-server"
-version = "0.1.13"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8f380fd32cad45e8aef94c741f4d02f61d40a7dc26e247e234a8b4eb1a1dc7a4"
-dependencies = [
- "chrono",
- "cuid",
- "futures",
- "futures-channel",
- "futures-util",
- "md5",
- "music-player-entity",
- "music-player-playback",
- "music-player-scanner",
- "music-player-settings",
- "music-player-storage",
- "music-player-tracklist",
- "music-player-types",
- "owo-colors",
- "prost",
- "sea-orm",
- "serde",
- "tokio",
- "tokio-tungstenite",
- "tonic",
- "tonic-build",
- "tonic-web",
- "tungstenite 0.17.3",
- "uuid",
-]
-
-[[package]]
-name = "music-player-server"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "11c6611efebb9e517e339702d65f6a597d1d029291c21420b050f0a217333ebe"
+checksum = "73d89e11d1331b0f4d3c8399dca5c31a9829d7b2231b44856fdeb732f43a8aa8"
 dependencies = [
  "chrono",
  "cuid",
@@ -3851,9 +3819,9 @@ dependencies = [
 
 [[package]]
 name = "music-player-storage"
-version = "0.1.8"
+version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2cde5b6b988aeaf4a63e1b4bd2f954c2835b3609ebb31f614d26cfff23fbc6c4"
+checksum = "24183537067bee867718379f2baec51f7667e6b4b917f85b8cbe73be08ffbb8b"
 dependencies = [
  "anyhow",
  "itertools",
@@ -3898,9 +3866,9 @@ dependencies = [
 
 [[package]]
 name = "music-player-webui"
-version = "0.1.15"
+version = "0.1.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4361ba549594bc39b4d69e6352ad69074855353eb6fe4c32dc819b99fb618274"
+checksum = "dc524d31205bdbf06e8832427fe61acfb0c4968aa318c6f56dfd600f32ab86f0"
 dependencies = [
  "actix-cors",
  "actix-files",
@@ -3908,6 +3876,7 @@ dependencies = [
  "async-graphql",
  "async-graphql-actix-web",
  "dirs 4.0.0",
+ "futures",
  "futures-util",
  "mime",
  "mime_guess",
@@ -5802,7 +5771,7 @@ dependencies = [
  "music-player-migration",
  "music-player-playback",
  "music-player-scanner",
- "music-player-server 0.2.0",
+ "music-player-server",
  "music-player-settings",
  "music-player-storage",
  "music-player-tracklist",
@@ -7003,9 +6972,9 @@ checksum = "a156c684c91ea7d62626509bce3cb4e1d9ed5c4d978f7b4352658f96a4c26b4a"
 
 [[package]]
 name = "upnp-client"
-version = "0.1.7"
+version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "707a259c0ef8bde8be3519694e2c5be39d1e1e70be716960546015446efce52e"
+checksum = "4dbb5216f79dee3f90aaeb07d1f6da5f5f52ebc1abc5cc269a3677387b1c75cc"
 dependencies = [
  "anyhow",
  "async-stream 0.3.5",
@@ -7018,7 +6987,6 @@ dependencies = [
  "owo-colors",
  "serde",
  "serde_json",
- "socket2",
  "surf",
  "tokio",
  "url",
