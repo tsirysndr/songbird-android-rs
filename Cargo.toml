@@ -20,7 +20,7 @@ music-player-migration = "0.1.9"
 music-player-playback = "0.1.13"
 music-player-server = "0.2.1"
 music-player-settings = "0.1.6"
-music-player-storage = "0.1.9"
+music-player-storage = "0.1.10"
 music-player-tracklist = "0.1.8"
 music-player-webui = "0.1.16"
 tokio = { version = "1.21.0", features = ["full"] }

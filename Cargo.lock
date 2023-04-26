@@ -3819,9 +3819,9 @@ dependencies = [
 
 [[package]]
 name = "music-player-storage"
-version = "0.1.9"
+version = "0.1.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "24183537067bee867718379f2baec51f7667e6b4b917f85b8cbe73be08ffbb8b"
+checksum = "c5f820957defde32a4da9d52df2a83b6691ea1ff45548f3a9b2f2130b39a3ff5"
 dependencies = [
  "anyhow",
  "itertools",
